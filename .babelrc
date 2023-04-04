@@ -1,0 +1,8 @@
+{
+  "sourceMaps": "inline",
+  "presets": ["@babel/preset-typescript"],
+  "plugins": ["@babel/plugin-syntax-import-assertions"],
+  "ignore": [
+    "src/lib/index.d.ts"
+  ]
+}

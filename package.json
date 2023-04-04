@@ -1,0 +1,76 @@
+{
+  "name": "@cli-dang/input",
+  "version": "3.2.12",
+  "license": "Apache-2.0",
+  "description": "Command Line Interface design framework. ESModule",
+  "type": "module",
+  "main": "index.js",
+  "types": "./index.d.ts",
+  "files": [
+    "lib",
+    "index.js",
+    "index.d.ts"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "prepublishOnly": "./shell_script/prePublish.sh",
+    "babel-watch": "npx babel --extensions \".ts\" --out-dir ./ src --watch",
+    "build": "./shell_script/build.sh",
+    "build:clean": "./shell_script/clean_build.sh",
+    "build:fix-chmod": "./shell_script/fix-chmod.sh",
+    "lint": "npx eslint . --ext .ts --ext .js",
+    "lint-fix": "npx eslint . --fix --ext .ts --ext .js",
+    "lint-watch": "npx esw --watch --fix --watch-delay=2",
+    "tsc-watch": "npx tsc --watch",
+    "test": "npx 4t unit",
+    "t8": "npx t8 --c8='src:./src|html:|no-questions:|no-print:|all:' unit"
+  },
+  "dependencies": {
+    "@cli-dang/activity": "^2.0.6",
+    "@cli-dang/decors": "^2.0.3",
+    "@cli-dang/boolean": "^2.0.3",
+    "@cli-dang/error": "^2.0.2",
+    "@cli-dang/object": "^2.0.3",
+    "oftypes": "4.0.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.21.0",
+    "@babel/eslint-parser": "^7.21.3",
+    "@babel/node": "^7.20.7",
+    "@babel/plugin-syntax-import-assertions": "^7.20.0",
+    "@babel/preset-typescript": "^7.21.4",
+    "@types/node": "^18.15.11",
+    "@typescript-eslint/eslint-plugin": "^5.57.1",
+    "eslint": "^8.37.0",
+    "eslint-import-resolver-typescript": "^3.5.4",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-sort-imports-es6-autofix": "^0.6.0",
+    "eslint-watch": "^8.0.0",
+    "trythistrythat": "3.0.8",
+    "typescript": "^5.0.3"
+  },
+  "keywords": [
+    "cli",
+    "framework",
+    "flags",
+    "commands",
+    "multi process"
+  ],
+  "author": {
+    "name": "Simone Del Popolo",
+    "email": "simonedelpopolo@outlook.com",
+    "url": "https://github.com/simonedelpopolo"
+  },
+  "homepage": "https://github.com/cli-dang/input#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cli-dang/input.git"
+  },
+  "bugs": {
+    "email": "simonedelpopolo@outlook.com",
+    "url": "https://github.com/cli-dang/input/issues"
+  }
+}

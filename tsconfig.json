@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "module": "esnext",
+    "target": "esnext",
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "inlineSourceMap": true,
+    "moduleResolution": "Node",
+    "allowSyntheticDefaultImports": true,
+    "rootDir": "./src",
+    "outDir": "./types",
+    "resolveJsonModule": true,
+  },
+  "exclude": [
+    "./node_modules/**/*",
+    "./tests/**/*",
+    "./src/lib/index.ts",
+    "./coverage/**/*",
+    "./types/**/*"
+  ]
+}
