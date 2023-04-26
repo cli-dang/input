@@ -1,7 +1,7 @@
 import { OftypesError } from 'oftypes'
-import { optionsSync } from './functions/optionsSync'
+import { optionsSync } from './functions/optionsSync.js'
 
-export async function processor( argv:string[] ):Promise<ParsedArgv|OftypesError>{
+export async function processor( argv: string[] ):Promise<ParsedArgv|OftypesError>{
 
   return new Promise( ( resolve, reject ) => {
 

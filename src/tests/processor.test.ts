@@ -1,6 +1,6 @@
 import * as assert from 'node:assert'
 import * as tttt from 'trythistrythat'
-import { processor } from '../lib/input/processor'
+import { processor } from '../lib/input/processor.js'
 
 export default async ( id ) => {
 
@@ -36,7 +36,7 @@ export async function rejects_undefined_argv( id ){
   const UNITName = '@cli-dang/input.processor rejects undefined argv'
 
   try{
-    // @ts-ignore
+    // @ts-ignore: @test
     await assert.rejects( processor(),
       ( error:Error ) => {
 
@@ -137,7 +137,7 @@ export async function rejects_argv_number( id ){
   const UNITName = '@cli-dang/input.processor rejects argv number'
 
   try{
-    // @ts-ignore
+    // @ts-ignore: @test
     await assert.rejects( processor( [ 0 ] ),
       ( error:Error ) => {
 

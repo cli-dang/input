@@ -1,6 +1,6 @@
 import * as tttt from 'trythistrythat'
 import { AssertionError } from 'assert'
-import { options } from '../lib/input/options'
+import { options } from '../lib/input/options.js'
 import { trace, trace_options } from '@cli-dang/activity'
 
 export default async ( id ) => {

@@ -1,4 +1,4 @@
-import { string_to_objectSync } from './string_to_objectSync'
+import { string_to_objectSync } from './string_to_objectSync.js'
 
 export function optionsSync( pattern:string ):OptionsType|string{
 

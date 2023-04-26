@@ -1,6 +1,6 @@
 import * as assert from 'assert'
 import * as tttt from 'trythistrythat'
-import { Command } from '../../lib/input/command'
+import { Command } from '../../lib/input/command.js'
 import { execFile } from 'child_process'
 
 export default async ( id ) => {
@@ -47,7 +47,7 @@ export async function intercept_data( id ){
 
       let result: Error
       try {
-        assert.deepStrictEqual( JSON.parse( stdout ), { object:{ get:'this' }, keys:[], command: 'name', flag: {} } )
+        assert.deepStrictEqual( JSON.parse( stdout ), { object:{ get:'this' }, keys:[], command: 'name', flag: {}, flag_returns: {} } )
       } catch ( error ) {
         result = error
       }

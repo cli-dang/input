@@ -1,6 +1,6 @@
 import * as assert from 'assert'
 import * as tttt from 'trythistrythat'
-import { Command } from '../../lib/input/command'
+import { Command } from '../../lib/input/command.js'
 
 export default async ( id ) => {
   let success = true

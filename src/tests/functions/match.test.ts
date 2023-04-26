@@ -1,5 +1,5 @@
 import * as tttt from 'trythistrythat'
-import match from '../../lib/input/functions/match'
+import match from '../../lib/input/functions/match.js'
 import { OftypesError } from 'oftypes'
 
 export default async ( id ) => {

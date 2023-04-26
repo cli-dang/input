@@ -1,5 +1,5 @@
-import match from './functions/match'
-import { error_message_text } from './functions/text/error_message'
+import match from './functions/match.js'
+import { error_message_text } from './functions/text/error_message.js'
 import { number_, OftypesError } from 'oftypes'
 
 export async function options( pattern:string, reference_to_flag:string ):Promise<OftypesError|OptionsType>{

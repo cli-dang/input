@@ -1,15 +1,15 @@
-import check_flag from './check/flag'
+import check_flag from './check/flag.js'
 import { array_, async_, OftypesError, resolvers } from 'oftypes'
 import { Dang } from '@cli-dang/decors'
 import { error_code } from '@cli-dang/error'
 import { exit } from '@cli-dang/activity'
 import { inspect } from 'node:util'
-import { processor } from './processor'
+import { processor } from './processor.js'
 
 export class Command implements InterfaceCommand{
 
   #_name: string | undefined
-  #_target: { [command:string]: string|object } | string
+  #_target: { [command:string]: unknown } | string
   readonly #_global_flag : GlobalFlag
   readonly #_commands : CommandsDefinition
 
@@ -41,8 +41,10 @@ export class Command implements InterfaceCommand{
 
   }
 
-  public async intercept( parsed:ParsedArgv ):Promise<void> {
+  public async intercept( parsed: ParsedArgv ): Promise<void> {
+
     let executed: null | string = null
+    let flag_reference: string
 
     const flag_cb_executor: executor_flag_cb = {
       priority_group:{
@@ -69,6 +71,7 @@ export class Command implements InterfaceCommand{
 
         executed = key
         parsed.flag = {}
+        parsed.flag_returns = {}
 
         if ( parsed.object?.[ key ] )
           await exit( `♠ command ${ Dang.red( key ) } doesn't accept any argument`, undefined, error_code.COMMAND )
@@ -77,7 +80,10 @@ export class Command implements InterfaceCommand{
         delete parsed.object[ key ]
 
         parsed.command = key
+
         for ( const flag of Object.keys( parsed.object ) ) {
+
+          flag_reference = flag
 
           if ( this.#_commands[ key ]?.flags ) {
             /* - if a flag is present */
@@ -154,9 +160,19 @@ export class Command implements InterfaceCommand{
 
     for ( const flag_object of flag_cb_priority_execution ) {
       if ( flag_object.flag_cb !== null ) {
-        ( await async_( flag_object.flag_cb ) )
-          ? await flag_object.flag_cb( flag_object.arg, ...flag_object.rest_args_cb )
-          : flag_object.flag_cb( flag_object.arg, ...flag_object.rest_args_cb )
+
+        let flag_cb_returns: unknown|undefined
+
+        if( await async_( flag_object.flag_cb ) ){
+          flag_cb_returns = await flag_object.flag_cb( flag_object.arg, ...flag_object.rest_args_cb )
+          if( flag_cb_returns !== undefined )
+            parsed.flag_returns[ flag_reference ] = flag_cb_returns
+
+        }else{
+          flag_cb_returns = flag_object.flag_cb( flag_object.arg, ...flag_object.rest_args_cb )
+          if( flag_cb_returns !== undefined )
+            parsed.flag_returns[ flag_reference ] = flag_cb_returns
+        }
       }
     }
 

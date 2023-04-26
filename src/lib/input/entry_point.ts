@@ -1,5 +1,5 @@
 import { async_ } from 'oftypes'
-import { processor } from './processor'
+import { processor } from './processor.js'
 
 export async function entry_point( argv:string[], logic:LogicParameter ):Promise<void>{
 

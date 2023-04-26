@@ -1,6 +1,6 @@
 import * as assert from 'assert'
 import * as tttt from 'trythistrythat'
-import { Command } from '../../lib/input/command'
+import { Command } from '../../lib/input/command.js'
 
 export default async ( id ) => {
 
@@ -8,13 +8,14 @@ export default async ( id ) => {
 
   const command =  new Command()
 
-  command.define( 'init', <cb>( data, ...rest_args ) => {
+  command.define( 'init', ( data, ...rest_args ) => {
 
     let success = true
     let message: undefined | string
     let result:Error|undefined = undefined
 
     try {
+      // @ts-ignore: @test
       assert.deepStrictEqual( data.object[ '--bare' ], rest_args[ 0 ] )
     } catch ( error ) {
       result = error
@@ -48,13 +49,14 @@ export async function global_command_flag( id ) {
 
   const command =  new Command()
 
-  command.define( '--init', <cb>( data ) => {
+  command.define( '--init', ( data ) => {
 
     let success = true
     let message: undefined | string
     let result:Error|undefined = undefined
 
     try {
+      //@ts-ignore: @test
       assert.deepStrictEqual( data.object[ '--init' ], 'hello' )
     } catch ( error ) {
       result = error

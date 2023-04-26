@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { Command } from '../../lib/input/command'
+import { Command } from '../../lib/input/command.js'
 
 const result = new Command()
 result.define( 'name', undefined )
