@@ -1,50 +1,53 @@
-import * as tttt from 'trythistrythat'
 import { AssertionError } from 'assert'
+import * as tttt from 'trythistrythat'
 import { entry_point } from '../lib/input/entry_point.js'
-import { OftypesError } from 'oftypes'
 
-export default async ( id ) => {
-  let success = true
-  let message:undefined|string
-  const UNITName = '@cli-dang/input.entry_point rejects no arguments given'
-  let actual: undefined|OftypesError = undefined
+export default async ( id ): Promise<void> => {
 
-  const result:boolean|AssertionError = await tttt.deepStrictEqual( async() => {
+  let success: boolean = true
+  let message: string
+  const UNITName: string = '@cli-dang/input.entry_point rejects no arguments given'
+  let actual: Error
+
+  const result: boolean | AssertionError = await tttt.deepStrictEqual( async (): Promise<TTTTResolversType> => {
 
     // @ts-ignore: @test
     actual = await entry_point().catch( error => error )
-    const expected = true
+    const expected: boolean = true
 
     return tttt.resolvers( actual instanceof Error, expected )
   } )
 
-  if( result instanceof Error ){
+  if ( result instanceof Error ) {
     tttt.failed( UNITName )
     success = false
     message = result.message
-  }else
+  } else
     message = actual.message
 
   tttt.end( id, success, UNITName, message )
 }
 
-export async function entry_point_no_rejects ( id ){
-  let success = true
-  let message:undefined|string
-  const UNITName = '@cli-dang/input.entry_point does NOT rejects'
+export async function entry_point_no_rejects( id ): Promise<void> {
 
-  const result:boolean|AssertionError = await tttt.deepStrictEqual( async() => {
-    const asyncFunction:LogicParameter = async( _argv: ParsedArgv ) => {
-      Object.entries( _argv )
+  let success: boolean = true
+  let message: undefined | string
+  const UNITName: string = '@cli-dang/input.entry_point does NOT rejects'
+
+  const result: boolean | AssertionError = await tttt.deepStrictEqual( async () => {
+
+    const asyncFunction: Input.LogicParameter = async ( argv: Input.ParsedArgv ) => {
+      const argv_entry: [ string, unknown ][] = Object.entries( argv )
+      if ( argv_entry.length === 0 )
+        await Promise.reject( new Error( 'empty object' ) )
     }
 
-    const actual = await entry_point( [ 'hello' ], asyncFunction )
-    const expected = undefined
+    const actual: undefined | Error = await entry_point( [ 'hello' ], asyncFunction )
 
-    return tttt.resolvers( actual, expected )
+    return tttt.resolvers( actual, undefined )
   } )
 
-  if( result instanceof Error ){
+  if ( result instanceof Error ) {
     tttt.failed( UNITName )
     success = false
     message = result.message
