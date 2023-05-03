@@ -7,10 +7,13 @@
     "outDir": "./",
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
-    "inlineSourceMap": true
+    "inlineSourceMap": true,
+    "declaration": true,
+    "declarationDir": "./types"
   },
   "exclude": [
     "./node_modules/**/*",
     "./coverage/**/*",
+    "./types/**"
   ]
 }
