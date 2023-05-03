@@ -1,14 +1,13 @@
 import { string_to_objectSync } from './string_to_objectSync.js'
 
-export function optionsSync( pattern:string ):OptionsType|string{
+export function optionsSync( pattern: string ): Input.OptionsType | string {
 
   try {
     const json_pattern = JSON.parse( pattern )
     if ( json_pattern && typeof json_pattern === 'object' )
       return pattern
 
-  }
-  catch ( error ) { /*continue*/ }
+  } catch ( error ) { /*continue*/ }
 
   /**
    * @ flag options should match the pattern
@@ -18,13 +17,13 @@ export function optionsSync( pattern:string ):OptionsType|string{
    * @type {RegExp}
    */
 
-  const matches = Array.from( pattern.matchAll( /(.*)[|](.*)/g ), matches => matches[ 0 ] )
+  const matches: string[] = Array.from( pattern.matchAll( /(.*)[|](.*)/g ), ( matches: RegExpMatchArray ) => matches[ 0 ] )
 
-  let matches_single:RegExpMatchArray[]|boolean = false
+  let matches_single: RegExpMatchArray[] | boolean = false
 
-  if (  matches.length === 0 ) {
+  if ( matches.length === 0 ) {
 
-    matches_single = Array.from( pattern.matchAll( /[^:]+/g ), matches => matches )
+    matches_single = Array.from( pattern.matchAll( /[^:]+/g ), ( matches: RegExpMatchArray ) => matches )
 
     if ( matches_single.length > 2 || matches_single.length === 0 )
 
