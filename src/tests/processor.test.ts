@@ -107,15 +107,15 @@ export async function rejects_empty_argv_element( id ){
 
 export async function rejects_empty_argv_string_element( id ){
 
-  let success = true
+  let success: boolean = true
   let message:undefined|string = undefined
-  const UNITName = '@cli-dang/input.processor rejects empty argv string element'
+  const UNITName: string = '@cli-dang/input.processor rejects empty argv string element'
 
   try{
     await assert.rejects( processor( [ '' ] ),
       ( error:Error ) => {
 
-        assert.deepStrictEqual( error.message, '♠ empty string.' )
+        assert.deepStrictEqual( error.message, '♠ no empty string.' )
 
         return true
       }
@@ -164,7 +164,7 @@ export async function argv_with_options_syntax( id ){
 
   const result:boolean|Error = await tttt.deepStrictEqual( async () => {
 
-    const actual:ParsedArgv = await processor( [ 'bim', '--table=gin:drink-it' ] ).catch( error => error )
+    const actual: Input.ParsedArgv = await processor( [ 'bim', '--table=gin:drink-it' ] ).catch( error => error )
     const expected = { object:{ '--table':{ gin:'drink-it' }, bim: undefined }, keys:[ 'bim', '--table' ] }
 
     return tttt.resolvers( actual, expected )
@@ -186,7 +186,7 @@ export async function match_empty_flag( id ){
 
   const result:boolean|Error = await tttt.deepStrictEqual( async () => {
 
-    const actual:ParsedArgv = await processor( [ 'bim', '--gastro' ] ).catch( error => error )
+    const actual: Input.ParsedArgv = await processor( [ 'bim', '--gastro' ] ).catch( error => error )
     const expected = { object: { '--gastro': null, bim: undefined }, keys:[ 'bim', '--gastro' ] }
 
     return tttt.resolvers( actual, expected )
