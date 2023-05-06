@@ -1,6 +1,6 @@
 {
   "name": "@cli-dang/input",
-  "version": "3.2.13",
+  "version": "4.0.0",
   "license": "Apache-2.0",
   "description": "Command Line Interface design framework. ESModule",
   "type": "module",
@@ -32,8 +32,8 @@
   },
   "dependencies": {
     "@cli-dang/activity": "^2.0.6",
-    "@cli-dang/decors": "^2.0.3",
     "@cli-dang/boolean": "^2.0.3",
+    "@cli-dang/decors": "^2.0.3",
     "@cli-dang/error": "^2.0.2",
     "@cli-dang/object": "^2.0.3",
     "oftypes": "4.0.0"
