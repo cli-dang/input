@@ -12,17 +12,17 @@ export default async ( id ) => {
   const x = () => {/**/}
 
   try {
-    result = new Command()
-    result.define( 'name', x )
+    result = new Command( { object: { 'init': undefined }, keys: [ 'init' ] } )
+    await result.define( 'name', x )
     assert.deepStrictEqual( await result.checkout( 'name' ), { flags: {}, cb: x, arguments: undefined } )
   } catch ( error ) {
     result = error
   }
 
   try {
-    result = new Command()
-    result.define( 'name', x )
-    result.define( 'last name', x )
+    result = new Command( { object: { 'init': undefined }, keys: [ 'init' ] } )
+    await result.define( 'name', x )
+    await result.define( 'last name', x )
     assert.deepStrictEqual( await result.checkout(), {
       name: {
         flags: {},
@@ -38,8 +38,8 @@ export default async ( id ) => {
   }
 
   try {
-    result = new Command()
-    result.define( 'name', x )
+    result = new Command( { object: { 'init': undefined }, keys: [ 'init' ] } )
+    await result.define( 'name', x )
     assert.deepStrictEqual( await result.checkout( 'jade' ), undefined )
   } catch ( error ) {
     result = error

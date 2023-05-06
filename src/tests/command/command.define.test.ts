@@ -1,21 +1,29 @@
 import * as assert from 'assert'
 import * as tttt from 'trythistrythat'
 import { Command } from '../../lib/input/command.js'
+import { Dang } from "@cli-dang/decors"
 
 export default async ( id ) => {
 
-  const UNITName = '@cli-dang/input.command.define help'
+  const UNITName: string = '@cli-dang/input.command.define help'
 
-  const command =  new Command()
+  const command: Command = new Command( {
+    object: { init: undefined, '--bare':{ data:'to_sanitise' }  },
+    keys: [
+      'init',
+      '--bare'
+    ],
 
-  command.define( 'init', ( data, ...rest_args ) => {
+  } )
 
-    let success = true
+  const commandCallBack: Input.CommandCallBack = ( data: Input.ParsedArgv, ...rest_args ): void => {
+
+    let success: boolean = true
     let message: undefined | string
-    let result:Error|undefined = undefined
+    let result: Error|undefined = undefined
 
     try {
-      // @ts-ignore: @test
+
       assert.deepStrictEqual( data.object[ '--bare' ], rest_args[ 0 ] )
     } catch ( error ) {
       result = error
@@ -28,38 +36,38 @@ export default async ( id ) => {
     }
 
     tttt.end( id, success, UNITName, message )
-  }, undefined, false, undefined, [ { data:'to_sanitise', } ] )
+  }
+
+  await command.define( 'init', commandCallBack, undefined, false, undefined, [ { data:'to_sanitise', } ] )
 
   await command.flag( '--bare', { short:'--bare', type:'opts' } )
-  await command.intercept( {
-    object: { init: undefined, '--bare':{ data:'to_sanitise' }  },
-    keys: [
-      'init',
-      '--bare'
-    ],
-
-  } )
+  await command.intercept()
 
 }
 
 export async function global_command_flag( id ) {
 
-  const UNITName = '@cli-dang/input.command.define global command flag'
+  const UNITName: string = '@cli-dang/input.command.define global command flag'
+  const command: Command = new Command( {
+    object: { '--init': 'hello', command: undefined  },
+    keys: [
+      '--init', 'command'
+    ],
 
+  } )
 
-  const command =  new Command()
+  await command.define( '--init', ( data: Input.ParsedArgv ): void => {
 
-  command.define( '--init', ( data ) => {
-
-    let success = true
+    let success: boolean = true
     let message: undefined | string
-    let result:Error|undefined = undefined
+    let result: Error|undefined = undefined
 
     try {
-      //@ts-ignore: @test
       assert.deepStrictEqual( data.object[ '--init' ], 'hello' )
-    } catch ( error ) {
-      result = error
+      assert.deepStrictEqual( data.object[ 'command' ], undefined )
+      assert.deepStrictEqual( data.keys, [ '--init', 'command' ] )
+    } catch ( AssertionError ) {
+      result = AssertionError
     }
 
     if ( result instanceof Error ) {
@@ -71,14 +79,47 @@ export async function global_command_flag( id ) {
     tttt.end( id, success, UNITName, message )
   }, undefined, true, 'string' )
 
-  command.define( 'command', () => {/*empty*/} )
+  await command.define( 'command', (): void => {/*empty*/} )
 
-  await command.intercept( {
+  await command.intercept()
+
+}
+
+export async function define_same_command( id ): Promise<void>{
+
+  const UNITName: string = '@cli-dang/input.command.define same command Rejects'
+
+  const command: Command = new Command( {
     object: { '--init': 'hello', command: undefined  },
     keys: [
       '--init', 'command'
     ],
 
   } )
+
+  await command.define( 'init', (): void => {/*empty*/} )
+
+  let success: boolean = true
+  let message: undefined | string = undefined
+
+  try{
+    await assert.rejects(
+      command.define( 'init', (): void => {/*empty*/} ),
+      ( error:Error ): boolean => {
+
+        assert.deepStrictEqual( error.message, 'command [init] already defined.' )
+
+        return true
+      },
+      Dang.red( 'define.command should have failed' )
+    )
+  }catch ( AssertionError ) {
+
+    tttt.failed( UNITName )
+    success = false
+    message = AssertionError.message
+  }
+
+  tttt.end( id, success, UNITName, message )
 
 }

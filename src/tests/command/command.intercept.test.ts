@@ -3,12 +3,12 @@ import * as tttt from 'trythistrythat'
 import { Command } from '../../lib/input/command.js'
 import { execFile } from 'child_process'
 
-export default async ( id ) => {
+export default async ( id ): Promise<void> => {
 
-  const UNITName = '@cli-dang/input.command.intercept help'
+  const UNITName: string = '@cli-dang/input.command.intercept help'
 
   execFile( `${process.cwd()}/tests/processes/intercept.help.process.js`, ( error, stdout ) => {
-    let success = true
+    let success: boolean = true
     let message: undefined | string
 
     let result: Error | Command
