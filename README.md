@@ -70,10 +70,11 @@ chmod u+x ./index.js
 
 **file index.js**
 ```javascript
-#!/usr/bin/env node
+#!/usr/bin/env node --no-warnings
 
 import { readFile } from 'node:fs/promises'
 import { Command, entry_point } from '@cli-dang/input'
+import { extname } from 'node:path'
 
 process.title = 'read-filename' // Optional give your cli a name.
 
@@ -83,18 +84,37 @@ const app = async (parsed) => {
   // The read command callback function
   const read_cb = async (data) => {
 
+    let exitCode = 0
+
     // Get the filename
     const filename = `${process.cwd()}/${data.flag['--filename'] || data.flag['-f']}`
 
+    // only json files are allowed
+    if(extname(filename) !== '.json'){
+      console.error('only json file')
+      process.exit(1)
+    }
+
     // It reads the file, and if the readFile fails, it returns a json string with the error message given.
-    const content = await readFile(filename, { encoding: 'utf-8' }).catch(error => `{"error":"${error.message}"}`)
+    const content = await readFile(filename, { encoding: 'utf-8' }).catch(error => {
+      exitCode = 1
+
+      return `{"error":"${ error.message }"}`
+    })
 
     // It converts to object the give json data.
-    const json_data = JSON.parse(content)
+    let json_data
+    try{
+      json_data = JSON.parse(content)
+    }catch ( error ) {
+      json_data = `{"error":"${error.message}"}`
+      exitCode = 1
+    }
 
     console.log(json_data)
+    process.exit(exitCode)
   };
-  
+
   // Instantiate a new Command and pass to the constructor the parsed argument
   const read = new Command(parsed)
 
@@ -158,11 +178,15 @@ the Command class automatically creates two commands:
 **let's run the app and all its functionalities**
 
 ```shell
+# usage
 ./index.js read --filename='test.json' # will print the object
-./index.js read --filename='test.json' # will print the ENOENT error message
+./index.js read --filename='test.js' # will print 'only json files'
+./index.js read --filename='no-file.json' # will print the ENOENT error message
 
-./index.js version # will print the version ⚠️ remember to run npm init -y !!!!
-./index.js help --view=read:--filename
+# automatic commands help & version
+./index.js version # will print the version
+./index.js help --view=read:--filename # will print the doc entry for the --filename flag
+./index.js help --view=read:-f # same same as above
 
 ```
 
