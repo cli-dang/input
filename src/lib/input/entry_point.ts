@@ -3,6 +3,11 @@ import { processor } from './processor.js'
 
 export async function entry_point( argv: NodeJS.Process['argv'], logic: Input.LogicParameter ): Promise<Error | undefined> {
 
+  /**
+   * Remove the first two entries of the process.argv
+   */
+  process.argv.splice( 0, 2 )
+
   if ( argv === undefined )
     return Promise.reject( new OftypesError( 'argv can\'t be undefined' ) )
 
