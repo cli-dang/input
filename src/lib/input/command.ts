@@ -1,22 +1,26 @@
-import check_flag from './check/flag.js'
-import { array_, async_, OftypesError, resolvers } from 'oftypes'
+import { exit } from '@cli-dang/activity'
 import { Dang } from '@cli-dang/decors'
 import { error_code } from '@cli-dang/error'
-import { exit } from '@cli-dang/activity'
 import { inspect } from 'node:util'
+import { async_, oftype_, OftypesError } from 'oftypes'
+import { ArrayMaxLength2 } from '../../../index.js'
+import check_flag from './check/flag.js'
 import { processor } from './processor.js'
 
-export class Command implements Input.InterfaceCommand{
+export class Command
+implements Input.InterfaceCommand {
 
   #_command: string | undefined
-  #_help_target: { [command:string]: unknown } | string
-  #_executing_command: null|string
+  #_help_target: {
+    [ command: string ]: unknown
+  } | string
+  #_executing_command: null | string
   #_flag_reference: string
   #_executor: Input.executor
   readonly #_v_per_version: boolean
   readonly #_parsedARGV: Input.ParsedArgv
-  readonly #_global_flag : Input.GlobalFlag
-  readonly #_commands : Input.CommandsDefinition
+  readonly #_global_flag: Input.GlobalFlag
+  readonly #_commands: Input.CommandsDefinition
   readonly #_flag_cb_executor: Input.executor_flag_cb
 
   constructor( parsedARGV: Input.ParsedArgv, v_per_version: boolean = false ) {
@@ -27,7 +31,7 @@ export class Command implements Input.InterfaceCommand{
     this.#_global_flag = {}
     this.#_executing_command = null
     this.#_flag_cb_executor = {
-      priority_group:{
+      priority_group: {
         '0': {},
         '1': {},
         '-1': {}
@@ -73,20 +77,22 @@ export class Command implements Input.InterfaceCommand{
       return
     }
 
-    if( Object.keys( this.#_parsedARGV.object ).includes( 'version' ) ) {
+    if ( Object.keys( this.#_parsedARGV.object ).includes( 'version' ) ) {
 
-      const version = ( await import( `${process.cwd()}/package.json`, { assert: { type: 'json' } } ) ).default.version
-      process.stdout.write( `${this.#_v_per_version ? 'v' : ''}${version}` )
+      const version = ( await import( `${ process.cwd() }/package.json`, { assert: { type: 'json' } } ) ).default.version
+      process.stdout.write( `${ this.#_v_per_version
+        ? 'v'
+        : '' }${ version }` )
 
       return
     }
 
-    if( Object.keys( this.#_global_flag ).length > 0 )
+    if ( Object.keys( this.#_global_flag ).length > 0 )
       await this.#global()
 
     for ( const key of this.#_parsedARGV.keys ) {
 
-      if (  this.#_commands?.[ key ] ) {
+      if ( this.#_commands?.[ key ] ) {
 
         this.#_executing_command = key
         this.#_parsedARGV.flag = {}
@@ -108,10 +114,10 @@ export class Command implements Input.InterfaceCommand{
             /* - if a flag is present */
             if ( this.#_commands[ key ].flags?.[ flag ] ) {
 
-              if( this.#_commands[ key ].flags[ flag ].conflict !== null ){
-                for( const conflict of this.#_commands[ key ].flags[ flag ].conflict ){
-                  if( Object.keys( this.#_parsedARGV.object ).includes( conflict ) )
-                    await exit( `${flag} has conflict with ${conflict}`, undefined, error_code.FLAG )
+              if ( this.#_commands[ key ].flags[ flag ].conflict !== null ) {
+                for ( const conflict of this.#_commands[ key ].flags[ flag ].conflict ) {
+                  if ( Object.keys( this.#_parsedARGV.object ).includes( conflict ) )
+                    await exit( `${ flag } has conflict with ${ conflict }`, undefined, error_code.FLAG )
                 }
               }
 
@@ -131,7 +137,7 @@ export class Command implements Input.InterfaceCommand{
 
                   this.#_executor = {
                     flag_cb: this.#_commands[ key ].flags[ flag ]?.cb || null,
-                    arg: type_check as string|object,
+                    arg: type_check as string | object,
                     rest_args_cb: this.#_commands[ key ].flags[ flag ]?.rest_args || null
                   }
 
@@ -166,7 +172,6 @@ export class Command implements Input.InterfaceCommand{
     for ( const flag_execution of Object.keys( this.#_flag_cb_executor.priority_group[ '0' ] ) )
       flag_cb_priority_execution.push( this.#_flag_cb_executor.priority_group[ '0' ][ flag_execution ] )
 
-
     if ( Object.keys( this.#_flag_cb_executor.priority_group[ '1' ] ).length > 0 ) {
       for ( const flag_execution of Object.keys( this.#_flag_cb_executor.priority_group[ '1' ] ) )
         flag_cb_priority_execution.push( this.#_flag_cb_executor.priority_group[ '1' ][ flag_execution ] )
@@ -180,22 +185,22 @@ export class Command implements Input.InterfaceCommand{
     for ( const flag_object of flag_cb_priority_execution ) {
       if ( flag_object.flag_cb !== null ) {
 
-        let flag_cb_returns: unknown|undefined
+        let flag_cb_returns: unknown | undefined
 
-        if( await async_( flag_object.flag_cb ) ){
+        if ( await async_( flag_object.flag_cb ) ) {
           flag_cb_returns = await flag_object.flag_cb( flag_object.arg, ...flag_object.rest_args_cb )
-          if( flag_cb_returns !== undefined )
+          if ( flag_cb_returns !== undefined )
             this.#_parsedARGV.flag_returns[ this.#_flag_reference ] = flag_cb_returns
 
-        }else{
+        } else {
           flag_cb_returns = flag_object.flag_cb( flag_object.arg, ...flag_object.rest_args_cb )
-          if( flag_cb_returns !== undefined )
+          if ( flag_cb_returns !== undefined )
             this.#_parsedARGV.flag_returns[ this.#_flag_reference ] = flag_cb_returns
         }
       }
     }
 
-    if( this.#_commands[ this.#_executing_command ]?.cb ) {
+    if ( this.#_commands[ this.#_executing_command ]?.cb ) {
       if ( await async_( this.#_commands[ this.#_executing_command ].cb ) )
         await this.#_commands[ this.#_executing_command ].cb( this.#_parsedARGV, ...( this.#_commands[ this.#_executing_command ].rest_args ) )
       else
@@ -207,15 +212,15 @@ export class Command implements Input.InterfaceCommand{
   public async define(
     name: string,
     cb: Input.CommandCallBack,
-    info: Input.Help = { description:'no description', usage:'no usage' },
+    info: Input.Help = { description: 'no description', usage: 'no usage' },
     global: boolean = false,
     global_type: Input.GlobalFlagType = 'string',
     rest_args: Input.RestArgsCallbacks = []
-  ): Promise<ReferenceError|void> {
+  ): Promise<ReferenceError | void> {
 
     this.#_command = name
 
-    if( global ){
+    if ( global ) {
       this.#_global_flag[ name ] = {
         cb: cb,
         rest_args: rest_args,
@@ -223,11 +228,9 @@ export class Command implements Input.InterfaceCommand{
         description: info.description,
         usage: info.usage
       }
-    }
-
-    else {
+    } else {
       if ( this.#_commands[ this.#_command ] )
-        return Promise.reject( ReferenceError( `command [${this.#_command}] already defined.` ) )
+        return Promise.reject( ReferenceError( `command [${ this.#_command }] already defined.` ) )
       else {
         this.#_commands[ name ] = {
           flags: {},
@@ -240,18 +243,22 @@ export class Command implements Input.InterfaceCommand{
     }
   }
 
-  public async flag( name: string|string[], descriptor: Input.FlagDescriptor ):Promise<void> {
+  public async flag( name: string | ArrayMaxLength2, descriptor: Input.FlagDescriptor ): Promise<void> {
 
-    const truthy = (): void => {
+    if ( await oftype_( name ) === 'Array' ) {
+
+      if ( name.length === 0 )
+        await Promise.reject( 'alias expressed in an array, must have at least one entry.' )
+
+      if ( name.length === 3 )
+        await Promise.reject( 'alias can be max 2, one for the short and one for the long.' )
+
       for ( const alias of name )
         this.#define_flag( alias, descriptor )
 
+      return
     }
-    const falsy = (): void => {
-      this.#define_flag( name as string, descriptor )
-    }
-
-    await array_( name, await resolvers( truthy, falsy ) )
+    this.#define_flag( name as string, descriptor )
   }
 
   #define_flag( name: string, descriptor: Input.FlagDescriptor ): void {
@@ -270,15 +277,15 @@ export class Command implements Input.InterfaceCommand{
     }
   }
 
-  async #global(): Promise<void>{
+  async #global(): Promise<void> {
 
-    let parameter: string|Input.ParsedArgv = this.#_parsedARGV
+    let parameter: string | Input.ParsedArgv = this.#_parsedARGV
 
-    for( const key of this.#_parsedARGV.keys ){
+    for ( const key of this.#_parsedARGV.keys ) {
 
       const parsed_global: Input.ParsedArgv | OftypesError = await processor( [ 'global', key ] ).catch( error => error )
 
-      if( !( parsed_global instanceof OftypesError ) ) {
+      if ( !( parsed_global instanceof OftypesError ) ) {
         if ( key.match( '=' ) )
           parameter = key.replace( parsed_global.keys[ 1 ], '' ).replace( '=', '' )
 
@@ -311,33 +318,29 @@ export class Command implements Input.InterfaceCommand{
   /**
    * @example `exec help --view=command:--flag|-f` to retrieve the manual entry of the flag related to the selected command
    * @example `exec help --view=command` to retrieve the manual entry related to the selected command
-   * @example `exec help --view=--global-flag` to retrieve the manual entry related to the selected global flag
+   * @example `exec help --view=--global-flag` to retrieve the manual entry related to the selected global flag.
    *
    * @private
    */
-  #help():void{
+  #help(): void {
 
-    if( this.#_help_target[ '--view' ] ) {
-      if ( this.#_help_target[ '--view' ].constructor.name === 'String' && this.#_commands[  this.#_help_target[ '--view' ] ] ) {
+    if ( this.#_help_target[ '--view' ] ) {
+      if ( this.#_help_target[ '--view' ].constructor.name === 'String' && this.#_commands[ this.#_help_target[ '--view' ] ] ) {
         process.stdout.write( `${ this.#_commands[ this.#_help_target[ '--view' ] ].description }\n` )
         process.stdout.write( `${ this.#_commands[ this.#_help_target[ '--view' ] ].usage }\n` )
-      }
-      else if ( this.#_help_target[ '--view' ].constructor.name === 'String' && this.#_global_flag[  this.#_help_target[ '--view' ] ] ) {
+      } else if ( this.#_help_target[ '--view' ].constructor.name === 'String' && this.#_global_flag[ this.#_help_target[ '--view' ] ] ) {
         process.stdout.write( `${ this.#_global_flag[ this.#_help_target[ '--view' ] ].description }\n` )
         process.stdout.write( `${ this.#_global_flag[ this.#_help_target[ '--view' ] ].usage }\n` )
-      }
-      else if(
+      } else if (
         this.#_help_target[ '--view' ].constructor.name === 'Object' &&
         this.#_commands[ Object.keys( this.#_help_target[ '--view' ] )[ 0 ] ] &&
         this.#_commands[ Object.keys( this.#_help_target[ '--view' ] )[ 0 ] ].flags[ this.#_help_target[ '--view' ][ Object.keys( this.#_help_target[ '--view' ] )[ 0 ] ] ]
       ) {
         process.stdout.write( `${ this.#_commands[ Object.keys( this.#_help_target[ '--view' ] )[ 0 ] ].flags[ this.#_help_target[ '--view' ][ Object.keys( this.#_help_target[ '--view' ] )[ 0 ] ] ].description }\n` )
         process.stdout.write( `${ this.#_commands[ Object.keys( this.#_help_target[ '--view' ] )[ 0 ] ].flags[ this.#_help_target[ '--view' ][ Object.keys( this.#_help_target[ '--view' ] )[ 0 ] ] ].usage }\n` )
-      }
-      else
+      } else
         process.stderr.write( `♠ command|flag|global-flag not found given --view: ${ inspect( this.#_help_target[ '--view' ] ) }\n` )
-    }
-    else {
+    } else {
       process.stderr.write( '`exec help --view=command:--flag` to retrieve the manual page entry of the flag related to selected command\n' )
       process.stderr.write( '`exec help --view=command` to retrieve the manual page entry related to the selected command\n' )
       process.stderr.write( '`exec help --view=--global-flag` to retrieve the manual page entry related to the selected global flag\n' )
