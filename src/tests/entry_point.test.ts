@@ -9,7 +9,7 @@ export default async ( id ): Promise<void> => {
   const UNITName: string = '@cli-dang/input.entry_point rejects no arguments given'
   let actual: Error
 
-  const result: boolean | AssertionError = await tttt.deepStrictEqual( async (): Promise<TTTTResolversType> => {
+  const result: boolean | AssertionError = await tttt.deepStrictEqual( async (): Promise<TTTT.ResolversType> => {
 
     // @ts-ignore: @test
     actual = await entry_point().catch( error => error )
